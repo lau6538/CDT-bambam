@@ -9,6 +9,9 @@ if [ "$EUID" -ne 0 ]; then
 	exit -1
 fi
 
+setenforce 0
+read -n 1 -s
+
 # make test empty folder in /tmp
 DIR="/tmp/bam"
 mkdir -p $DIR
