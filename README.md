@@ -8,17 +8,17 @@ Command line usage: ./bambam.sh
 
 This script prompts the user with four options:
 1) Hide a specific process
-   Self-explanatory.
-   Prompts the user for the PID of the process they want to hide. ps -ef in command line will help.
+ - Self-explanatory.
+ - Prompts the user for the PID of the process they want to hide. ps -ef in command line will help.
 2) Hide random processes
-   From the list of processes, randomly hides approximately 50% that are listed.
+ - From the list of processes, randomly hides approximately 50% that are listed.
 3) Hide all processes for a specific user
-   Hides the processes running on a specific user.
-   Prompts the user for the user name whose processes they want to hide.
+ - Hides the processes running on a specific user.
+ - Prompts the user for the user name whose processes they want to hide.
 4) Hide all processes
-   Self-explanatory.
+ - Self-explanatory.
 5) Unhide all hidden processes
-   Self-explanatory. Undo your shenanigans.
+ - Self-explanatory. Undo your shenanigans.
 
 Sorry, but no vault speed increase is included with this script.
 
