@@ -106,6 +106,8 @@ do
 			# you have chosen yes
 			if [ "$in" == "y" ] || [ "$in" == "Y" ]; then
 				printf "Hiding random processes...\n"
+				# process hidden count
+				i=0
 				
 				# get the PIDs from process list
 				ps -ef | awk '{print $2}' | while read pid
@@ -127,10 +129,14 @@ do
 							# success
 							else
 								printf "Process $pid hidden\n"
+								# increment counter
+								let "i++"
 							fi
 						fi
 					fi
 				done
+				
+				printf "$i processes hidden\n"
 			# you have chosen no
 			else
 				printf "No processes hidden\n"
@@ -160,6 +166,8 @@ do
 					# check if the user is running any processes
 					if [ ! -z "$(ps -ef | awk '{print $1}' | grep -w $user)" ]; then
 						printf "Hiding $user's processes...\n"
+						# process hidden count
+						i=0
 						
 						# get the PIDs from the process list
 						ps -ef | awk '{print $1,$2}' | grep -w $user | awk '{print $2}' | while read pid
@@ -174,8 +182,12 @@ do
 							# success
 							else
 								printf "Process $pid hidden\n"
+								# increment counter
+								let "i++"
 							fi
 						done
+						
+						printf "$i processes hidden\n"
 					# user is not running any processes
 					else
 						printf "User $user has no visible processes running\n"
@@ -203,6 +215,8 @@ do
 			# you have chosen yes
 			if [ "$in" == "y" ] || [ "$in" == "Y" ]; then
 				printf "Hiding all processes...\n"
+				# process hidden count
+				i=0
 				
 				# get the PIDs from process list
 				ps -ef | awk '{print $2}' | while read pid
@@ -219,9 +233,13 @@ do
 						# success
 						else
 							printf "Process $pid hidden\n"
+							# increment counter
+							let "i++"
 						fi
 					fi
 				done
+				
+				printf "$i processes hidden\n"
 			# you have chosen no
 			else
 				printf "No processes hidden\n"
@@ -242,6 +260,8 @@ do
 			# you have chosen yes
 			if [ "$in" == "y" ] || [ "$in" == "Y" ]; then
 				printf "Unhiding all hidden processes...\n"
+				# process unhidden counter
+				i=0
 				
 				# find hidden processes
 				ls -1 $PDIR | grep bam | while read line
@@ -253,7 +273,11 @@ do
 					# remove the empty directory
 					rmdir ${DIR}${pid}
 					printf "Process $pid unhidden\n"
+					# increment counter
+					let "i++"
 				done
+				
+				printf "$i processes unhidden\n"
 			# you have chosen no
 			else
 				printf "No processes unhidden\n"
