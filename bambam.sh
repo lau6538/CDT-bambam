@@ -237,7 +237,7 @@ do
 		5)
 			# prompt for decision
 			clear
-			printf "Are you sure you want to hide all processes?\n"
+			printf "Are you sure you want to unhide all hidden processes?\n"
 			printf "[y/n]?"
 			read in
 			
@@ -252,6 +252,8 @@ do
 					pid=${line#"$prefix"}
 					# unmount the process
 					umount /proc/$pid
+					# remove the empty directory
+					rmdir ${DIR}${pid}
 					printf "Process $pid unhidden\n"
 				done
 			# you have chosen no
