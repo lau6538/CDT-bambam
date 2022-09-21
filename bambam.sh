@@ -10,7 +10,6 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 setenforce 0
-read -n 1 -s
 
 # make test empty folder in /tmp
 DIR="/tmp/bam"
@@ -74,7 +73,7 @@ do
 					break
 				fi
 				
-				# make an empty directory and mount the process PID dir to that directory
+				# make an empty directory and bind mount the process PID dir to that directory
 				mkdir -p ${DIR}${pid}
 				mount -o bind ${DIR}${pid} /proc/$pid
 				
@@ -91,29 +90,46 @@ do
 			done
 			opt="yes"
 			;;
-		# hide random processes
+		# hide random processes (only run this if you want to break the computer)
 		2)
+			# prompt for decision
 			clear
-			printf "Hiding random processes...\n"
+			printf "Are you sure you want to hide random processes?\n"
+			printf "[y/n]?"
+			read in
 			
-			ps -ef | while read line
-			do
-				pid=$(awk '{print $2}')
-				if [ "$pid" != "PID" ]; then
-					if [ $RANDOM -gt 16383 ]; then
-						mkdir -p ${DIR}${pid}
-						mount -o bind ${DIR}${pid} /proc/$pid
-						
-						# failure
-						if [ $? -ne 0 ]; then
-							printf "Mount failed for /proc/$pid\n"
-						# success
-						else
-							printf "Process $pid hidden\n"
+			# you have chosen yes
+			if [ "$in" == "y" ] || [ "$in" == "Y" ]; then
+				printf "Hiding random processes...\n"
+				
+				# get the PIDs from process list
+				ps -ef | pid=$(awk '{print $2}') | while read pid
+				do
+					# get random number
+					rand=$(shuf -i 1-50 -n1)
+					
+					# first line is "PID", ignore
+					if [ "$pid" != "PID" ]; then
+						# 50% chance of hiding the process
+						if [ $rand -gt 24 ]; then
+							# make an empty directory and bind mount the process PID dir to that directory	
+							mkdir -p ${DIR}${pid}
+							mount -o bind ${DIR}${pid} /proc/$pid
+							
+							# failure
+							if [ $? -ne 0 ]; then
+								printf "Mount failed for /proc/$pid\n"
+							# success
+							else
+								printf "Process $pid hidden\n"
+							fi
 						fi
 					fi
-				fi
-			done
+				done
+			# you have chosen no
+			else
+				printf "No processes hidden\n"
+			fi
 			
 			printf "Done. Press any key to return to menu\n"
 			read -n 1 -s
