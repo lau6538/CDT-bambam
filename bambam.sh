@@ -27,12 +27,10 @@ if [ $? -ne 0 ]; then
 		echo "Script failed"
 		exit -2
 	fi
-	
-	rmdir $DIR 2> /dev/null
 fi
 
 # remove test folder
-rmdir $DIR 2> /dev/null
+rmdir $DIR
 
 prefix="bam"
 
