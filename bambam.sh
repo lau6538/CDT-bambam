@@ -153,7 +153,7 @@ do
 				fi
 				
 				# check if the user exists
-				if [ ! -z $(cat /etc/passwd | cut -d: -f1 | grep -w $user) ]; then
+				if [ ! -z "$(cat /etc/passwd | cut -d: -f1 | grep -w $user)" ]; then
 					# check if the user is running any processes
 					if [ ! -z $(ps -ef | awk '{print $1}' | grep -w $user) ]; then
 						printf "Hiding $user's processes...\n"
@@ -181,7 +181,13 @@ do
 				else
 					printf "User $user does not exist\n"
 				fi
+				
+				break
 			done
+			
+			printf "Done. Press any key to return to menu\n"
+			read -n 1 -s
+			opt="yes"
 			;;
 		# hide all processes
 		4)
