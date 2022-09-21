@@ -153,13 +153,13 @@ do
 				fi
 				
 				# check if the user exists
-				if [ ! $(cat /etc/passwd | cut -d: -f1 | grep -w \"$user\") ]; then
+				if [ ! -z $(cat /etc/passwd | cut -d: -f1 | grep -w $user) ]; then
 					# check if the user is running any processes
-					if [ ! $(ps -ef | awk '{print $1}' | grep -w \"$user\") ]; then
+					if [ ! -z $(ps -ef | awk '{print $1}' | grep -w $user) ]; then
 						printf "Hiding $user's processes...\n"
 						
 						# get the PIDs from the process list
-						ps -ef | awk '{print $1,$2}' | grep -w \"$user\" | awk '{print $2}' | while read pid
+						ps -ef | awk '{print $1,$2}' | grep -w $user | awk '{print $2}' | while read pid
 						do
 							# make an empty directory and bind mount the process PID dir to that directory	
 							mkdir -p ${DIR}${pid}
