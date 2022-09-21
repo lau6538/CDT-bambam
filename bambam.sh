@@ -13,11 +13,13 @@ setenforce 0
 
 # make test empty folder in /tmp
 DIR="/tmp/bam"
+PDIR="/tmp"
 mkdir -p $DIR
 
 # if it can't, make test empty folder in /usr/bin
 if [ $? -ne 0 ]; then
 	DIR="/usr/bin/bam"
+	PDIR="/usr/bin"
 	mkdir -p $DIR
 	
 	# if it can't, quit
@@ -31,6 +33,8 @@ fi
 
 # remove test folder
 rmdir $DIR 2> /dev/null
+
+prefix="bam"
 
 while :
 do
@@ -47,6 +51,7 @@ do
 	printf "2) Hide random processes\n"
 	printf "3) Hide all processes for a specific user\n"
 	printf "4) Hide all processes\n"
+	printf "5) Unhide all hidden processes\n"
 	printf "q to quit\n\n"
 	
 	if [ "$opt" = "no" ]; then
@@ -222,6 +227,36 @@ do
 			# you have chosen no
 			else
 				printf "No processes hidden\n"
+			fi
+			
+			printf "Done. Press any key to return to menu\n"
+			read -n 1 -s
+			opt="yes"
+			;;
+		# unhide all hidden processes
+		5)
+			# prompt for decision
+			clear
+			printf "Are you sure you want to hide all processes?\n"
+			printf "[y/n]?"
+			read in
+			
+			# you have chosen yes
+			if [ "$in" == "y" ] || [ "$in" == "Y" ]; then
+				printf "Unhiding all hidden processes...\n"
+				
+				# find hidden processes
+				ls -1 $PDIR | grep bam | while read line
+				do
+					# get the pid
+					pid=${line#"$prefix"}
+					# unmount the process
+					umount /proc/$pid
+					printf "Process $pid unhidden\n"
+				done
+			# you have chosen no
+			else
+				printf "No processes unhidden\n"
 			fi
 			
 			printf "Done. Press any key to return to menu\n"
