@@ -45,6 +45,8 @@ do
 	printf "Enter selection:\n"
 	printf "1) Hide a specific process\n"
 	printf "2) Hide random processes\n"
+	printf "3) Hide all processes for a specific user\n"
+	printf "4) Hide all processes\n"
 	printf "q to quit\n\n"
 	
 	if [ "$opt" = "no" ]; then
@@ -90,7 +92,7 @@ do
 			done
 			opt="yes"
 			;;
-		# hide random processes (only run this if you want to break the computer)
+		# hide random processes
 		2)
 			# prompt for decision
 			clear
@@ -103,7 +105,7 @@ do
 				printf "Hiding random processes...\n"
 				
 				# get the PIDs from process list
-				ps -ef | pid=$(awk '{print $2}') | while read pid
+				ps -ef | awk '{print $2}' | while read pid
 				do
 					# get random number
 					rand=$(shuf -i 1-50 -n1)
@@ -123,6 +125,91 @@ do
 							else
 								printf "Process $pid hidden\n"
 							fi
+						fi
+					fi
+				done
+			# you have chosen no
+			else
+				printf "No processes hidden\n"
+			fi
+			
+			printf "Done. Press any key to return to menu\n"
+			read -n 1 -s
+			opt="yes"
+			;;
+		# hide all processes for a specific user
+		3)
+			while :
+			do
+				# prompt for user name
+				clear
+				printf "Enter the user whose processes you want to hide (q to menu)\n"
+				printf "(If you're unsure, do ps -ef)\n"
+				read user
+				
+				# return to menu
+				if [ "$user" == "q" ] || [ "$user" == "Q" ]; then
+					break
+				fi
+				
+				# check if the user exists
+				if [ "$(cat /etc/passwd | cut -d: -f1 | grep $user)" == "$user" ]; then
+					# check if the user is running any processes
+					if [[ $(ps -ef | grep root) ]]; then
+						printf "Hiding $user's processes...\n"
+						
+						# get the PIDs from the process list
+						ps -ef | grep $user | awk '{print $2}' | while read pid
+						do
+							# make an empty directory and bind mount the process PID dir to that directory	
+							mkdir -p ${DIR}${pid}
+							mount -o bind ${DIR}${pid} /proc/$pid
+							
+							# failure
+							if [ $? -ne 0 ]; then
+								printf "Mount failed for /proc/$pid\n"
+							# success
+							else
+								printf "Process $pid hidden\n"
+							fi
+						done
+					# user is not running any processes
+					else
+						printf "User $user has no visible processes running\n"
+					fi
+				# user does not exist
+				else
+					printf "User $user does not exist\n"
+				fi
+			done
+			;;
+		# hide all processes
+		4)
+			# prompt for decision
+			clear
+			printf "Are you sure you want to hide all processes?\n"
+			printf "[y/n]?"
+			read in
+			
+			# you have chosen yes
+			if [ "$in" == "y" ] || [ "$in" == "Y" ]; then
+				printf "Hiding all processes...\n"
+				
+				# get the PIDs from process list
+				ps -ef | awk '{print $2}' | while read pid
+				do
+					# first line is "PID", ignore
+					if [ "$pid" != "PID" ]; then
+						# make an empty directory and bind mount the process PID dir to that directory	
+						mkdir -p ${DIR}${pid}
+						mount -o bind ${DIR}${pid} /proc/$pid
+						
+						# failure
+						if [ $? -ne 0 ]; then
+							printf "Mount failed for /proc/$pid\n"
+						# success
+						else
+							printf "Process $pid hidden\n"
 						fi
 					fi
 				done
