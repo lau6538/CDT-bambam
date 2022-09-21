@@ -1,6 +1,6 @@
 So, you want to discombobulate your targets with Bamboozle?
 
-Bambam simply hides processes by bind mounting /proc/[PID] to empty folders.
+Bambam is a Linux script that simply hides processes by bind mounting /proc/[PID] to empty folders.
 It must be run locally as root to function.
 The empty folders are bam#, and the script will show that they are located either in /tmp or in /usr/bin.
 
